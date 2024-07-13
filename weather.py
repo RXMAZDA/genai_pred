@@ -8,6 +8,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from sklearn.metrics import mean_squared_error
 
+import customtkinter as ctk
 
 class LSTMModelPredictor:
     def __init__(self, train_data_path, new_data_path, feature_name):
@@ -75,7 +76,7 @@ class LSTMModelPredictor:
         new_features = new_data[[self.feature_name]]
         # Predict on new data
         new_predictions = self.predict_new_data(new_features, seq_length)
-        return new_predictions[:60]  # Return the first 60 predictions
+        return new_predictions[:1]  # Return the first 60 predictions
 
 
 class RenewableEnergyRecommendation:
@@ -106,11 +107,16 @@ class RenewableEnergyRecommendation:
         else:
             return "No recommendation available for the given conditions"
 
-
 class App:
     def __init__(self, root):
         self.root = root
         self.root.title("LSTM Model Predictor & Renewable Energy Recommendation")
+        self.root.geometry("800x600")
+
+        # Scrollable frame
+        self.scrollable_frame = ctk.CTkScrollableFrame(self.root, width=760, height=560)
+        self.scrollable_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+
         self.weather_options = ['clearsky', 'cloudy', 'rainy', 'hot', 'cold']
         self.wind_options = ['low', 'medium', 'high']
 
@@ -119,61 +125,61 @@ class App:
 
     def setup_frames(self):
         # Data Prediction Frame
-        self.data_prediction_frame = tk.Frame(self.root, padx=10, pady=10, borderwidth=2, relief="groove")
-        self.data_prediction_frame.grid(row=0, column=0, padx=10, pady=10)
+        self.data_prediction_frame = ctk.CTkFrame(self.scrollable_frame, corner_radius=10)
+        self.data_prediction_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
-        self.label_train_path = tk.Label(self.data_prediction_frame, text="Train Data Path:")
-        self.label_train_path.grid(row=0, column=0, padx=5, pady=5)
-        self.entry_train_path = tk.Entry(self.data_prediction_frame, width=50)
-        self.entry_train_path.grid(row=0, column=1, padx=5, pady=5)
-        self.button_browse_train = tk.Button(self.data_prediction_frame, text="Browse", command=self.browse_train_file)
-        self.button_browse_train.grid(row=0, column=2, padx=5, pady=5)
+        self.label_train_path = ctk.CTkLabel(self.data_prediction_frame, text="Train Data Path:")
+        self.label_train_path.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.entry_train_path = ctk.CTkEntry(self.data_prediction_frame, width=300)
+        self.entry_train_path.grid(row=0, column=1, padx=10, pady=10)
+        self.button_browse_train = ctk.CTkButton(self.data_prediction_frame, text="Browse", command=self.browse_train_file)
+        self.button_browse_train.grid(row=0, column=2, padx=10, pady=10)
 
-        self.label_new_path = tk.Label(self.data_prediction_frame, text="New Data Path:")
-        self.label_new_path.grid(row=1, column=0, padx=5, pady=5)
-        self.entry_new_path = tk.Entry(self.data_prediction_frame, width=50)
-        self.entry_new_path.grid(row=1, column=1, padx=5, pady=5)
-        self.button_browse_new = tk.Button(self.data_prediction_frame, text="Browse", command=self.browse_new_file)
-        self.button_browse_new.grid(row=1, column=2, padx=5, pady=5)
+        self.label_new_path = ctk.CTkLabel(self.data_prediction_frame, text="New Data Path:")
+        self.label_new_path.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        self.entry_new_path = ctk.CTkEntry(self.data_prediction_frame, width=300)
+        self.entry_new_path.grid(row=1, column=1, padx=10, pady=10)
+        self.button_browse_new = ctk.CTkButton(self.data_prediction_frame, text="Browse", command=self.browse_new_file)
+        self.button_browse_new.grid(row=1, column=2, padx=10, pady=10)
 
-        self.label_feature = tk.Label(self.data_prediction_frame, text="Feature:")
-        self.label_feature.grid(row=2, column=0, padx=5, pady=5)
-        self.entry_feature = tk.Entry(self.data_prediction_frame, width=50)
-        self.entry_feature.grid(row=2, column=1, padx=5, pady=5)
+        self.label_feature = ctk.CTkLabel(self.data_prediction_frame, text="Feature:")
+        self.label_feature.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        self.entry_feature = ctk.CTkEntry(self.data_prediction_frame, width=300)
+        self.entry_feature.grid(row=2, column=1, padx=10, pady=10)
 
-        self.button_predict = tk.Button(self.data_prediction_frame, text="Predict", command=self.predict)
-        self.button_predict.grid(row=3, column=0, columnspan=3, padx=5, pady=5)
+        self.button_predict = ctk.CTkButton(self.data_prediction_frame, text="Predict", command=self.predict)
+        self.button_predict.grid(row=3, column=0, columnspan=3, padx=10, pady=20)
 
-        self.label_prediction_result = tk.Label(self.data_prediction_frame, text="Predictions:")
-        self.label_prediction_result.grid(row=4, column=0, padx=5, pady=5)
-        self.text_prediction_result = tk.Text(self.data_prediction_frame, height=10, width=60)
-        self.text_prediction_result.grid(row=5, column=0, columnspan=3, padx=5, pady=5)
+        self.label_prediction_result = ctk.CTkLabel(self.data_prediction_frame, text="Predictions:")
+        self.label_prediction_result.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+        self.text_prediction_result = ctk.CTkTextbox(self.data_prediction_frame, height=200, width=500)
+        self.text_prediction_result.grid(row=5, column=0, columnspan=3, padx=10, pady=10)
 
         # Renewable Energy Recommendation Frame
-        self.recommendation_frame = tk.Frame(self.root, padx=10, pady=10, borderwidth=2, relief="groove")
-        self.recommendation_frame.grid(row=1, column=0, padx=10, pady=10)
+        self.recommendation_frame = ctk.CTkFrame(self.scrollable_frame, corner_radius=10)
+        self.recommendation_frame.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
 
-        self.label_weather_condition = tk.Label(self.recommendation_frame, text="Weather Condition:")
-        self.label_weather_condition.grid(row=0, column=0, padx=5, pady=5)
-        self.weather_condition_var = tk.StringVar(self.recommendation_frame)
+        self.label_weather_condition = ctk.CTkLabel(self.recommendation_frame, text="Weather Condition:")
+        self.label_weather_condition.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.weather_condition_var = ctk.StringVar(self.recommendation_frame)
         self.weather_condition_var.set(self.weather_options[0])
-        self.option_menu_weather = tk.OptionMenu(self.recommendation_frame, self.weather_condition_var, *self.weather_options)
-        self.option_menu_weather.grid(row=0, column=1, padx=5, pady=5)
+        self.option_menu_weather = ctk.CTkOptionMenu(self.recommendation_frame, variable=self.weather_condition_var, values=self.weather_options)
+        self.option_menu_weather.grid(row=0, column=1, padx=10, pady=10)
 
-        self.label_wind_condition = tk.Label(self.recommendation_frame, text="Wind Condition:")
-        self.label_wind_condition.grid(row=1, column=0, padx=5, pady=5)
-        self.wind_condition_var = tk.StringVar(self.recommendation_frame)
+        self.label_wind_condition = ctk.CTkLabel(self.recommendation_frame, text="Wind Condition:")
+        self.label_wind_condition.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        self.wind_condition_var = ctk.StringVar(self.recommendation_frame)
         self.wind_condition_var.set(self.wind_options[0])
-        self.option_menu_wind = tk.OptionMenu(self.recommendation_frame, self.wind_condition_var, *self.wind_options)
-        self.option_menu_wind.grid(row=1, column=1, padx=5, pady=5)
+        self.option_menu_wind = ctk.CTkOptionMenu(self.recommendation_frame, variable=self.wind_condition_var, values=self.wind_options)
+        self.option_menu_wind.grid(row=1, column=1, padx=10, pady=10)
 
-        self.button_recommend = tk.Button(self.recommendation_frame, text="Recommend", command=self.recommend)
-        self.button_recommend.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+        self.button_recommend = ctk.CTkButton(self.recommendation_frame, text="Recommend", command=self.recommend)
+        self.button_recommend.grid(row=2, column=0, columnspan=2, padx=10, pady=20)
 
-        self.label_recommendation_result = tk.Label(self.recommendation_frame, text="Recommendation:")
-        self.label_recommendation_result.grid(row=3, column=0, padx=5, pady=5)
-        self.text_recommendation_result = tk.Text(self.recommendation_frame, height=5, width=40)
-        self.text_recommendation_result.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
+        self.label_recommendation_result = ctk.CTkLabel(self.recommendation_frame, text="Recommendation:")
+        self.label_recommendation_result.grid(row=3, column=0, padx=10, pady=10, sticky="w")
+        self.text_recommendation_result = ctk.CTkTextbox(self.recommendation_frame, height=200, width=500)
+        self.text_recommendation_result.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
 
     def browse_train_file(self):
         file_path = filedialog.askopenfilename()
@@ -194,7 +200,7 @@ class App:
 
         lstm_predictor = LSTMModelPredictor(train_data_path, new_data_path, feature_name)
         predictions = lstm_predictor.run(seq_length=10, epochs=20, batch_size=32, validation_split=0.2)
-        self.text_prediction_result.insert(tk.END, f"The next 60 days values predicted: {predictions}\n")
+        self.text_prediction_result.insert(ctk.END, f"The next day's values predicted: {predictions}\n")
 
     def recommend(self):
         weather_condition = self.weather_condition_var.get()
@@ -202,10 +208,10 @@ class App:
 
         renewable_rec = RenewableEnergyRecommendation()
         recommendation = renewable_rec.recommend_plant(weather_condition, wind_condition)
-        self.text_recommendation_result.insert(tk.END, f"Recommended renewable energy plant: {recommendation}\n")
+        self.text_recommendation_result.insert(ctk.END, f"Recommended renewable energy plant: {recommendation}\n")
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    root = ctk.CTk()
     app = App(root)
     root.mainloop()
